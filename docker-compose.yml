@@ -1,0 +1,34 @@
+version: "3"
+
+name: proquiz
+
+services:
+  db:
+    image: postgres:latest
+    container_name: proquiz-db
+    restart: always
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+      POSTGRES_DB: proquiz
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - proquiz-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: proquiz-mailhog
+    restart: always
+    ports:
+      - 8025:8025
+      - 1025:1025
+
+volumes:
+  proquiz-data:
+    driver: local
